@@ -17,14 +17,14 @@ export const addToCart = (product : Product) => {
     localStorage.setItem('cart', JSON.stringify(cart))
 }
 export const removeFromCart = ( productId : string) => {
-    let cart : Product[] = JSON.parse(localStorage.getItem(' cart') || '[]')
+    let cart : Product[] = JSON.parse(localStorage.getItem('cart') || '[]')
     cart = cart.filter(item => item._id  !== productId)
-    localStorage.setItem(' cart', JSON.stringify(cart))
+    localStorage.setItem('cart', JSON.stringify(cart))
 
 }
 
 export const updateCartQuantity = (productId : string, quantity : number) => {
-    const cart : Product[] = JSON.parse(localStorage.getItem(' cart') || '[]')
+    const cart : Product[] = JSON.parse(localStorage.getItem('cart') || '[]')
     const productIndex = cart.findIndex(item => item._id === productId )
 
     if(productIndex > -1) {
@@ -33,5 +33,5 @@ export const updateCartQuantity = (productId : string, quantity : number) => {
 }
 
 export const getCartItems = () : Product[] => {
-    return JSON.parse(localStorage.getItem(' cart ') || '[]')
+    return JSON.parse(localStorage.getItem('cart') || '[]')
 }
