@@ -1,5 +1,69 @@
 
- 'use client'; // Marking this file for client-side execution
+'use state'
+import { Product } from "@/types/product"
+import React, { useEffect, useState } from 'react';
+import { getCartItems } from "../actions/actions";
+
+const checkOut = () => {
+
+    const [cartItems, setCartItems] = useState<Product[]>([])
+    const [discount, setdiscount] = useState<number>(0)
+    const [formValues, setformValues] = useState({
+    firstName: '',
+     lastName: '',
+     address: '',
+     email: '',
+     contact: '',
+     city: '',
+     street: '',
+     countryCode: '',
+   
+}) 
+
+const [formError, setformError] = useState({
+    firstName: '',
+     lastName: '',
+     address: '',
+     email: '',
+     contact: '',
+     city: '',
+     street: '',
+     countryCode: '',
+   
+}) 
+
+useEffect(() => {
+    setCartItems(getCartItems())
+    const appliedDiscount = localStorage.getItem("appliedDiscount")
+    if(appliedDiscount) {
+    setDiscount(Number(appliedDiscount))
+}
+}, [])
+
+const subTotal = cartItems.reduce(
+    (total,item) => total + item.price * item.quantity, 0)
+
+    const handleInputChange =(e: React.ChangeEvent<HTMLInputElement)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//  'use client'; // Marking this file for client-side execution
 
 // import React, { useState } from 'react';
 // import { client } from '../../sanity/lib/client'; // Adjust the relative path

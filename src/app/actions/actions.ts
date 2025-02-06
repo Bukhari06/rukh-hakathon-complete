@@ -28,7 +28,8 @@ export const updateCartQuantity = (productId : string, quantity : number) => {
     const productIndex = cart.findIndex(item => item._id === productId )
 
     if(productIndex > -1) {
-        cart [productIndex].quantity = quantity
+        cart [productIndex].quantity = quantity;
+        localStorage.setItem('cart', JSON.stringify(cart))
     }
 }
 

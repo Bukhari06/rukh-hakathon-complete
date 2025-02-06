@@ -1,6 +1,6 @@
 import { client } from "@/sanity/lib/client"
 import { urlFor } from "@/sanity/lib/image"
-import { Product } from "@/sanity/schemaTypes/product"
+import { Product } from '../../../types/product';
 import { groq } from "next-sanity"
 
 interface ProductPageProps {
@@ -21,7 +21,7 @@ return client.fetch(
 }
 
 
-export default async function ProductPage({params}: ProductPage){
+export default async function ProductPage({params}: ProductPageProps){
     const {slug} = await params;
     const product = await getProduct(slug)
 
@@ -30,9 +30,9 @@ export default async function ProductPage({params}: ProductPage){
             <div className=" grid grid-col-1 md:grid-cols-2 gap-12">
                 <div className=" aspect-square">
                     {product.image && ( 
-                        <image
+                        <img
                         src={urlFor(product.image).url()}
-                        alt={product.Name}
+                        alt={product.name}
                         width={500}
                         height={500}
                         className="rounded-lg shadow-md"
@@ -40,9 +40,9 @@ export default async function ProductPage({params}: ProductPage){
                     )}
                 </div>
                 <div className="flex flex-col gap-8">
-                    <h1 className="text axl font-bold">
-                        {product.Name}
-                        <p className="font-a">
+                    <h1 className="text 4xl font-bold">
+                        {product.name}
+                        <p className="text-2xl font-sans">
                             {product.price}
                         </p>
                     </h1>
