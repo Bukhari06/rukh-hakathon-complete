@@ -18,8 +18,10 @@
         "name": "next"
       }
     ],
+    "baseUrl": ".",  // Set baseUrl to the root of your project
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],  // Keep this mapping if your source code is in "src"
+      "@/types/*": ["./types/*"]  // Correct the path to the "types" directory
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
