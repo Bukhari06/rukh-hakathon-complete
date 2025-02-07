@@ -6,7 +6,7 @@ import { getCartItems, removeFromCart, updateCartQuantity } from '../actions/act
 import Swal from 'sweetalert2';
 import Image from 'next/image';
 import { urlFor } from '@/sanity/lib/image';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 
 const CartPage = () => {
   const [cartItems, setCartItems] = useState<Product[]>([]);
@@ -66,7 +66,6 @@ const CartPage = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         Swal.fire('Success', 'Your order has been successfully processed', 'success');
-        
         router.push("/checkout")
         setCartItems([]);
       }

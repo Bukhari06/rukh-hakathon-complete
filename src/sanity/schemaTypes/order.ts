@@ -1,4 +1,7 @@
 // schemas/order.js
+import { title } from "process"
+
+
 export default {
   name: 'order',
   title: 'Order',
@@ -7,28 +10,38 @@ export default {
     {
       name: 'firstName',
       title: 'First Name',
-      type: 'string',
+      type: 'string'
     },
     {
       name: 'lastName',
       title: 'Last Name',
-      type: 'string',
+      type: 'string'
     },
     {
       name: 'address',
       title: 'Address',
+      type: 'string'
+    },
+    {
+      name: 'city',
+      title: 'City',
+      type: 'string'
+    },
+    
+    {
+      name: 'zipCode',
+      title: 'Zip Code',
       type: 'string',
     },
     {
-      name: 'product',
-      title: 'Product',
-      type: 'reference',
-      to: [{ type: 'product' }], // Reference to the 'product' type
+      name: 'phone',
+      title: 'Phone',
+      type: 'string',
     },
     {
-      name: 'total',
-      title: 'Total Price',
-      type: 'number',
+      name: 'email',
+      title: 'Email',
+      type: 'string',
     },
     {
       name: 'orderDate',
@@ -36,12 +49,29 @@ export default {
       type: 'datetime',
     },
     {
-      name: 'orderStatus',
-      title: 'Order Status',
-      type: 'string',
-      options: {
-        list: ['Pending', 'Confirmed', 'Shipped'], // Example statuses
+      name: 'cartitems',
+      title: 'Cart Items',
+      type: 'array',
+      of : [{type : 'reference', to : { type : 'product'}}]
       },
-    },
-  ],
-};
+      {
+        name: 'total',
+        title: 'Total',
+        type: 'number',
+      },
+      {
+        name: 'status',
+        title: 'Order Status',
+        type: 'string',
+        options: {
+          list: [
+            {title : 'Pending', value: 'pending'},
+            {title : 'Success', value: 'success'},
+            {title : 'Dispatch', value: 'dispatch'}
+          ],
+          layout : 'radio'
+        },
+        initialValue : 'pending'
+    }
+  ]
+}

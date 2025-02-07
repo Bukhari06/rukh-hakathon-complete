@@ -1,299 +1,279 @@
+'use client';
 
-'use state'
-import { Product } from "@/types/product"
+import { Product } from "@/types/product";
 import React, { useEffect, useState } from 'react';
 import { getCartItems } from "../actions/actions";
+import Link from "next/link";
+import { urlFor } from '@/sanity/lib/image';
+import { client } from "@/sanity/lib/client";
 
-const checkOut = () => {
+
+const CheckOut = () => {
 
     const [cartItems, setCartItems] = useState<Product[]>([])
-    const [discount, setdiscount] = useState<number>(0)
-    const [formValues, setformValues] = useState({
-    firstName: '',
-     lastName: '',
-     address: '',
-     email: '',
-     contact: '',
-     city: '',
-     street: '',
-     countryCode: '',
-   
-}) 
+    const [discount, setDiscount] = useState<number>(0)
+    const [formValues, setFormValues] = useState({
+        firstName: '',
+        lastName: '',
+        address: '',
+        city: '',
+        zipCode: '',
+        phone: '',
+        email: '',
+    })
 
-const [formError, setformError] = useState({
-    firstName: '',
-     lastName: '',
-     address: '',
-     email: '',
-     contact: '',
-     city: '',
-     street: '',
-     countryCode: '',
-   
-}) 
+    const [formErrors, setFormErrors] = useState({
+        firstName: false,
+        lastName: false,
+        address: false,
+        city: false,
+        zipCode: false,
+        phone: false,
+        email: false,
+    })
 
-useEffect(() => {
-    setCartItems(getCartItems())
-    const appliedDiscount = localStorage.getItem("appliedDiscount")
-    if(appliedDiscount) {
-    setDiscount(Number(appliedDiscount))
+    useEffect(() => {
+        setCartItems(getCartItems());
+        const appliedDiscount = localStorage.getItem("appliedDiscount");
+        if (appliedDiscount) {
+            setDiscount(Number(appliedDiscount))
+        }
+    }, []);
+
+    const subTotal = cartItems.reduce(
+        (total, item) => total + item.price * item.quantity, 0
+    )
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setFormValues({
+            ...formValues,
+            [e.target.id]: e.target.value
+        })
+    }
+
+    const validateForm = () => {
+        const errors = {
+            firstName: !formValues.firstName,
+            lastName: !formValues.lastName,
+            address: !formValues.address,
+            city: !formValues.city,
+            zipCode: !formValues.zipCode,
+            phone: !formValues.phone,
+            email: !formValues.email,
+            
+        };
+        setFormErrors(errors);
+    
+        return Object.values(errors).every((error) => !error);
+    };
+
+    const handlePlaceOrder = async () => {
+        if (validateForm()) {
+            localStorage.removeItem("appliedDiscount");
+        }
+    
+        const orderData = {
+            _type: 'order',
+            firstName: formValues.firstName,
+            lastName: formValues.lastName,
+            address: formValues.address,
+            city: formValues.city,
+            zipCode: formValues.zipCode,
+            phone: formValues.phone,
+            email: formValues.email,
+            cartItems: cartItems.map((item) => ({
+                _type: 'reference',
+                _ref: item._id
+            })),
+            total: subTotal - discount, 
+            discount: discount,
+            orderDate: new Date().toISOString(),
+        };
+    
+        console.log("Order Data:", orderData); // Log the data being sent to sanity
+    
+        try {
+            await client.create(orderData);
+            localStorage.removeItem("appliedDiscount");
+        } catch (error) {
+            console.error("Error creating order", error);
+        }
+    };
+    
+    
+
+    return (
+        <div className="min-h-screen bg-gray-100">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="py-4 flex justify-between items-center">
+                    <h1 className="text-3xl font-semibold">Order Your Items</h1>
+                    <nav className="text-lg">
+                        <Link href="/Cart" className="text-blue-500 hover:underline">Cart</Link> 
+                        <span className="mx-2">|</span>
+                        <span className="text-gray-500">Checkout</span>
+                    </nav>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 py-8">
+                    {/* Order Summary */}
+                    <div className="bg-white p-6 rounded-lg shadow-md">
+                        <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
+                        {cartItems.length > 0 ? (
+                            cartItems.map((item) => (
+                                <div key={item._id} className="flex items-center border-b pb-4 mb-4">
+                                    <div className="flex-shrink-0 w-24 h-24 mr-4">
+                                        {item.image && (
+                                            <img
+                                                src={urlFor(item.image).url()}
+                                                alt={item.product}
+                                                className="object-cover"
+                                            />
+                                        )}
+                                    </div>
+                                    <div className="flex-grow">
+                                        <h3 className="text-lg font-semibold">{item.name}</h3>
+                                        <p className="text-sm text-gray-600">Quantity: {item.quantity}</p>
+                                        <p className="text-xl font-semibold text-gray-800">${item.price * item.quantity}</p>
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            <p className="text-center text-gray-500">No items in cart</p>
+                        )}
+
+                        <div className="flex justify-between items-center mt-4 border-t pt-4">
+                           SubTotal: <span className="font-medium text-sm">${subTotal}</span>
+                           <p className="text-sm">
+                          Dicount:<span className="text-xl font-bold">${discount}</span>
+                          </p>
+                          <p className="text-lg font-italic">
+                          Total: ${subTotal.toFixed(2)}
+                          </p>
+                        </div>
+                    </div>
+
+                    {/* Shipping Form */}
+                    <div className="bg-white p-6 rounded-lg shadow-md">
+                        <h2 className="text-xl font-semibold mb-4">Shipping Information</h2>
+                        <form>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                                <input
+                                    type="text"
+                                    id="firstName"
+                                    value={formValues.firstName}
+                                    onChange={handleInputChange}
+                                    placeholder="Enter Your First Name"
+                                    className="border p-3 rounded-md w-full"
+                                />
+                                {formErrors.firstName && (
+                                    <p>
+                                    First Name is Required
+                                    </p>
+                                )}
+                                <input
+                                    type="text"
+                                    id="lastName"
+                                    value={formValues.lastName}
+                                    onChange={handleInputChange}
+                                    placeholder="Enter Your Last Name"
+                                    className="border p-3 rounded-md w-full"
+                                />
+
+{formErrors.firstName && (
+                                    <p>
+                                    First Name is Required
+                                    </p>
+                                )}
+                            </div>
+
+                            <input
+                                type="text"
+                                id="address"
+                                value={formValues.address}
+                                onChange={handleInputChange}
+                                placeholder="Address"
+                                className="border p-3 rounded-md w-full mb-4"
+                            />
+
+{formErrors.firstName && (
+                                    <p>
+                                    Address is Required
+                                    </p>
+                                )}
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                                <input
+                                    type="text"
+                                    id="email"
+                                    value={formValues.email}
+                                    onChange={handleInputChange}
+                                    placeholder="Email"
+                                    className="border p-3 rounded-md w-full"
+                                />
+
+{formErrors.firstName && (
+                                    <p>
+                                    Email is Required
+                                    </p>
+                                )}
+                                <input
+                                    type="text"
+                                    id="phone"
+                                    value={formValues.phone}
+                                    onChange={handleInputChange}
+                                    placeholder="phone"
+                                    className="border p-3 rounded-md w-full"
+                                />
+
+{formErrors.firstName && (
+                                    <p>
+                                    Contact is Required
+                                    </p>
+                                )}
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                                <input
+                                    type="text"
+                                    id="city"
+                                    value={formValues.city}
+                                    onChange={handleInputChange}
+                                    placeholder="City"
+                                    className="border p-3 rounded-md w-full"
+                                />
+
+{formErrors.firstName && (
+                                    <p>
+                                    City is Required
+                                    </p>
+                                )}
+                                
+                            </div>
+
+                            <input
+                                type="text"
+                                id="zipCode"
+                                value={formValues.zipCode}
+                                onChange={handleInputChange}
+                                placeholder="zipCode"
+                                className="border p-3 rounded-md w-full mb-6"
+                            />
+                            {formErrors.zipCode && <p>contry is required</p>}
+                            <button
+                                type="submit"
+                                className="bg-pink-400 text-white p-3 w-full rounded-md hover:bg-pink-700"
+                            >
+                                Place Order
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default CheckOut;
+function validateForm() {
+    throw new Error("Function not implemented.");
 }
-}, [])
 
-const subTotal = cartItems.reduce(
-    (total,item) => total + item.price * item.quantity, 0)
-
-    const handleInputChange =(e: React.ChangeEvent<HTMLInputElement)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//  'use client'; // Marking this file for client-side execution
-
-// import React, { useState } from 'react';
-// import { client } from '../../sanity/lib/client'; // Adjust the relative path
-
-// const ProductListAndOrderForm = () => {
-//   const products = [
-//     { name: 'Chair', image: '/chair1.png', price: 100, _id: 'chair_001' },  // Added _id for reference
-//   ];
-
-//   const [selectedProduct, setSelectedProduct] = useState(products[0]);
-//   const [formData, setFormData] = useState({
-//     firstName: '',
-//     lastName: '',
-//     address: '',
-//     email: '',
-//     contact: '',
-//     city: '',
-//     street: '',
-//     countryCode: '',
-//   });
-//   const [orderSuccess, setOrderSuccess] = useState(false);
-//   const [quantity, setQuantity] = useState(1);
-
-//   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-//     const { name, value } = e.target;
-//     setFormData((prevData) => ({
-//       ...prevData,
-//       [name]: value,
-//     }));
-//   };
-
-//   const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-//     setQuantity(parseInt(e.target.value, 10)); // Ensure that quantity is an integer
-//   };
-
-//   // Make the handlePlaceOrder function async to handle async operations
-//   const handlePlaceOrder = async () => {
-//     if (!selectedProduct._id) {
-//       console.error('Product ID is missing');
-//       return;
-//     }
-
-//     const orderData = {
-//       _type: 'order',
-//       firstName: formData.firstName,
-//       lastName: formData.lastName,
-//       address: formData.address,
-//       email: formData.email,
-//       contact: formData.contact,
-//       city: formData.city,
-//       street: formData.street,
-//       countryCode: formData.countryCode,
-//       product: {
-//         _type: 'reference',
-//         _ref: selectedProduct._id, // Reference to the product's _id in Sanity
-//       },
-//       total: selectedProduct.price * quantity,
-//       orderDate: new Date().toISOString(), // Use toISOString() to format the date
-//       orderStatus: 'Pending', // Or any initial status you want
-//     };
-
-//     // Log the order data to check its content
-//     console.log('Order Data:', orderData);
-
-//     // Submit order data to Sanity
-//     try {
-//       await client.create(orderData);
-//       console.log('Order created successfully');
-//       setOrderSuccess(true); // Update the success state
-//     } catch (error) {
-//       console.error('Error creating order:', error);
-//       alert('There was an error placing your order');
-//     }
-//   };
-
-//   const handleSubmit = (e: React.FormEvent) => {
-//     e.preventDefault();
-//     handlePlaceOrder(); // Trigger order placement on form submit
-//   };
-
-//   return (
-//     <div className="max-w-screen-lg mx-auto p-6">
-//       <h1 className="text-3xl font-bold text-center mb-6 text-pink-300">Order Your Item</h1>
-
-//       {selectedProduct && (
-//         <div className="mt-8 p-6 border rounded-md">
-//           <h2 className="text-xl font-semibold mb-4">Product / {selectedProduct.name}</h2>
-
-//           {orderSuccess ? (
-//             <div className="bg-green-100 text-green-700 p-4 rounded-md text-center">
-//               <h2>Your order for {selectedProduct.name} has been successfully confirmed!</h2>
-//             </div>
-//           ) : (
-//             <form onSubmit={handleSubmit} className="space-y-4">
-//               <div className="text-center">
-//                 <img
-//                   src={selectedProduct.image}
-//                   alt={selectedProduct.name}
-//                   className="mx-auto h-48 object-cover mb-4"
-//                 />
-//                 <div>
-//                   <p className="text-lg font-semibold">Price: £{selectedProduct.price}</p>
-//                   <label className="block text-sm font-medium mt-2">Quantity</label>
-//                   <input
-//                     type="number"
-//                     min="1"
-//                     value={quantity}
-//                     onChange={handleQuantityChange}
-//                     className="mt-1 p-2 border rounded-md w-full max-w-xs mx-auto"
-//                   />
-//                 </div>
-//               </div>
-
-//               <div className="grid grid-cols-2 gap-4">
-//                 <div>
-//                   <label htmlFor="firstName" className="block text-sm font-medium">First Name</label>
-//                   <input
-//                     type="text"
-//                     name="firstName"
-//                     id="firstName"
-//                     value={formData.firstName}
-//                     onChange={handleInputChange}
-//                     className="mt-1 p-2 border rounded-md w-full"
-//                     required
-//                   />
-//                 </div>
-//                 <div>
-//                   <label htmlFor="lastName" className="block text-sm font-medium">Last Name</label>
-//                   <input
-//                     type="text"
-//                     name="lastName"
-//                     id="lastName"
-//                     value={formData.lastName}
-//                     onChange={handleInputChange}
-//                     className="mt-1 p-2 border rounded-md w-full"
-//                     required
-//                   />
-//                 </div>
-//               </div>
-
-//               <div>
-//                 <label htmlFor="address" className="block text-sm font-medium">Address</label>
-//                 <input
-//                   type="text"
-//                   name="address"
-//                   id="address"
-//                   value={formData.address}
-//                   onChange={handleInputChange}
-//                   className="mt-1 p-2 border rounded-md w-full"
-//                   required
-//                 />
-//               </div>
-
-//               <div>
-//                 <label htmlFor="email" className="block text-sm font-medium">Email</label>
-//                 <input
-//                   type="email"
-//                   name="email"
-//                   id="email"
-//                   value={formData.email}
-//                   onChange={handleInputChange}
-//                   className="mt-1 p-2 border rounded-md w-full"
-//                   required
-//                 />
-//               </div>
-
-//               <div>
-//                 <label htmlFor="contact" className="block text-sm font-medium">Contact</label>
-//                 <input
-//                   type="text"
-//                   name="contact"
-//                   id="contact"
-//                   value={formData.contact}
-//                   onChange={handleInputChange}
-//                   className="mt-1 p-2 border rounded-md w-full"
-//                   required
-//                 />
-//               </div>
-
-//               <div>
-//                 <label htmlFor="city" className="block text-sm font-medium">City</label>
-//                 <input
-//                   type="text"
-//                   name="city"
-//                   id="city"
-//                   value={formData.city}
-//                   onChange={handleInputChange}
-//                   className="mt-1 p-2 border rounded-md w-full"
-//                   required
-//                 />
-//               </div>
-
-//               <div>
-//                 <label htmlFor="street" className="block text-sm font-medium">Street</label>
-//                 <input
-//                   type="text"
-//                   name="street"
-//                   id="street"
-//                   value={formData.street}
-//                   onChange={handleInputChange}
-//                   className="mt-1 p-2 border rounded-md w-full"
-//                   required
-//                 />
-//               </div>
-
-//               <div>
-//                 <label htmlFor="countryCode" className="block text-sm font-medium">Country Code</label>
-//                 <input
-//                   type="text"
-//                   name="countryCode"
-//                   id="countryCode"
-//                   value={formData.countryCode}
-//                   onChange={handleInputChange}
-//                   className="mt-1 p-2 border rounded-md w-full"
-//                   required
-//                 />
-//               </div>
-
-//               <button
-//                 type="submit"
-//                 className="bg-blue-500 text-white px-6 py-3 rounded-md hover:bg-blue-600 mt-4 w-full"
-//               >
-//                 Order Now
-//               </button>
-//             </form>
-//           )}
-//         </div>
-//       )}
-//     </div>
-//   );
-// };
-
-// export default ProductListAndOrderForm;
