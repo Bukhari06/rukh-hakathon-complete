@@ -1,7 +1,7 @@
 
 import Link from "next/link";
 import React from "react";
-
+import Image from "next/image";
 const AboutUs = () => {
   return (
     <div>
@@ -32,12 +32,18 @@ const AboutUs = () => {
     </Link>
   </div>
 
-  <div className="md:w-1/2 flex justify-center">
-    <img
-      src="/Image Block.png"
-      alt="Chair"
-      className="w-[630px] h-[478px]"
-    />
+  <div className="flex justify-center">
+  <Image
+  src="/photo.png"  // Ensure the path is correct (public folder or Sanity URL)
+  alt="image"
+  className="w-[640px] h-[440px] flex items-center justify-between px-6"
+  width={630}
+  height={478}
+/>
+
+
+
+    
   </div>
 </div>
     </div>

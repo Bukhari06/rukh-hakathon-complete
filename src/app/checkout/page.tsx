@@ -273,7 +273,5 @@ const CheckOut = () => {
 };
 
 export default CheckOut;
-function validateForm() {
-    throw new Error("Function not implemented.");
-}
+
 

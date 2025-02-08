@@ -25,11 +25,11 @@ const TopBar = () => {
             <MagnifyingGlassIcon className="h-6 w-6 cursor-pointer" />
           </Link>
 
-          <Link href="/Listing">
+          <Link href="/Cart">
             <ShoppingCartIcon className="h-6 w-6 cursor-pointer" />
           </Link>
 
-          <Link href="/profile">
+          <Link href="/checkout">
             <UserCircleIcon className="h-6 w-6 cursor-pointer" />
           </Link>
         </div>
@@ -58,7 +58,7 @@ const TopBar = () => {
             <ShoppingCartIcon className="h-6 w-6 cursor-pointer" />
           </Link>
 
-          <Link href="/profile">
+          <Link href="/checkout">
             <UserCircleIcon className="h-6 w-6 cursor-pointer" />
           </Link>
         </div>

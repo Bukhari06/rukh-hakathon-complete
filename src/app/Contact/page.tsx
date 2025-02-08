@@ -41,7 +41,7 @@ const ContactPage = () => {
         {formSubmitted ? (
           <div className="bg-green-100 text-green-700 p-4 rounded-md text-center">
             <h2>Your message has been successfully sent!</h2>
-            <p>We'll get back to you as soon as possible.</p>
+            <p>We&apos;ll get back to you as soon as possible.</p>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
