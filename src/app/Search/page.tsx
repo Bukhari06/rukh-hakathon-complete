@@ -2,19 +2,27 @@
 
 import React, { useState } from 'react';
 
+// Define the Product type
+type Product = {
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+};
+
 // Sample data (replace with your actual product data or API call)
-const products = [
+const products: Product[] = [
   { id: 1, name: 'Dandy Chair', description: 'A stylish and comfortable chair', price: 250 },
   { id: 2, name: 'Small Table', description: 'A small and versatile table', price: 150 },
   { id: 3, name: 'Sofa', description: 'A luxurious sofa for your living room', price: 500 },
   { id: 4, name: 'Coffee Table', description: 'Perfect for your coffee breaks', price: 120 },
   { id: 5, name: 'Dining Table', description: 'A beautiful dining table', price: 350 },
-  { id: 4, name: 'Table', description: 'Perfect for your writting', price: 120 },
+  { id: 6, name: 'Table', description: 'Perfect for your writing', price: 120 },
 ];
 
 const SearchPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedProduct, setSelectedProduct] = useState<any>(null);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   // Handle input change for search
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {

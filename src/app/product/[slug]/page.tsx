@@ -1,7 +1,8 @@
 import { client } from "@/sanity/lib/client"
 import { urlFor } from "@/sanity/lib/image"
-import { Product } from '../../../types/product';
+import { Product } from '../../../../types/product';
 import { groq } from "next-sanity"
+import Image from "next/image";
 
 interface ProductPageProps {
     params : Promise<{slug : string}>
@@ -29,10 +30,10 @@ export default async function ProductPage({params}: ProductPageProps){
         <div className="max-w-7xl mx-auto px-4">
             <div className=" grid grid-col-1 md:grid-cols-2 gap-12">
                 <div className=" aspect-square">
-                    {product.image && ( 
-                        <img
-                        src={urlFor(product.image).url()}
-                        alt={product.name}
+                    {product?.image && ( 
+                        <Image
+                        src={urlFor(product?.image).url()}
+                        alt={product?.name}
                         width={500}
                         height={500}
                         className="rounded-lg shadow-md"
@@ -41,9 +42,9 @@ export default async function ProductPage({params}: ProductPageProps){
                 </div>
                 <div className="flex flex-col gap-8">
                     <h1 className="text 4xl font-bold">
-                        {product.name}
+                        {product?.name}
                         <p className="text-2xl font-sans">
-                            {product.price}
+                            {product?.price}
                         </p>
                     </h1>
                 </div>

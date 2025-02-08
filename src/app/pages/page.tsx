@@ -8,14 +8,13 @@ import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { addToCart } from '../actions/actions';
 import swal from "sweetalert2";
-import { title } from 'process';
 import Link from 'next/link';
 
 
 const PRODUCT = () => {
   const [product, setProduct] = useState<Product[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const [, setLoading] = useState<boolean>(true);
+  const [, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchProduct() {

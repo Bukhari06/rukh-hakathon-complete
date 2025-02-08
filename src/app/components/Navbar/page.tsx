@@ -7,7 +7,7 @@ const Header = () => {
   // for the mobile menu
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  let navItems = [
+  const navItems = [
     { name: "Home", link: "/" },
     { name: "Plant Pots", link: "/Plant" },
     { name: "Ceramics", link: "/Cera" },

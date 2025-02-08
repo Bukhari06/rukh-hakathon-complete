@@ -2,8 +2,8 @@
 
 import Link from 'next/link';
 import React, { useState } from 'react';
-import { IoCartOutline } from 'react-icons/io5'; // For the cart icon
-
+import { IoCartOutline } from 'react-icons/io5';// For the cart icon
+import Image from 'next/image';
 const ProductPage = () => {
   // State for managing the quantity of the product
   const [quantity, setQuantity] = useState<number>(1);
@@ -25,10 +25,12 @@ const ProductPage = () => {
       <div className="flex flex-col md:flex-row items-center justify-between space-y-6 md:space-y-0">
         {/* Product Image */}
         <div className="w-full md:w-[721px] h-[740px] bg-gray-200 rounded-md flex justify-center items-center">
-          <img
+          <Image
             src="/chair1.png" // Example image, replace with your product image path
             alt="Dany Chair"
             className="w-full h-full object-cover rounded-md"
+            width={721}
+            height={740}
           />
         </div>
 

@@ -1,5 +1,6 @@
 'use client';
 
+import Image from "next/image";
 import React, { useState } from "react";
 
 const Photos = () => {
@@ -26,7 +27,7 @@ const Photos = () => {
         {/* Product Cards */}
         <div className="grid grid-cols-3">
           <div>
-            <img
+            <Image
               src="/image.png"
               alt="Chair"
               className="w-[161px] h-[243px]"

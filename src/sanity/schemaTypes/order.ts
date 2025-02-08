@@ -1,7 +1,4 @@
 // schemas/order.js
-import { title } from "process"
-
-
 export default {
   name: 'order',
   title: 'Order',

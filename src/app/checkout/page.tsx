@@ -67,38 +67,6 @@ const CheckOut = () => {
         return Object.values(errors).every((error) => !error);
     };
 
-    const handlePlaceOrder = async () => {
-        if (validateForm()) {
-            localStorage.removeItem("applliedDiscount");
-        }
-    
-        const orderData = {
-            _type: 'order',
-            firstName: formValues.firstName,
-            lastName: formValues.lastName,
-            address: formValues.address,
-            city: formValues.city,
-            zipCode: formValues.zipCode,
-            phone: formValues.phone,
-            email: formValues.email,
-            cartItems: cartItems.map((item) => ({
-                _type: 'reference',
-                _ref: item._id
-            })),
-            total: subTotal - discount, 
-            discount: discount,
-            orderDate: new Date().toISOString(),
-        };
-    
-        console.log("Order Data:", orderData); // Log the data being sent to sanity
-    
-        try {
-            await client.create(orderData);
-            localStorage.removeItem("appliedDiscount");
-        } catch (error) {
-            console.error("Error creating order", error);
-        }
-    };
     
     return (
         <div className="min-h-screen bg-gray-100">
