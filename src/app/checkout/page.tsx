@@ -6,7 +6,7 @@ import { getCartItems } from "../actions/actions";
 import Link from "next/link";
 import { urlFor } from '@/sanity/lib/image';
 import { client } from "@/sanity/lib/client";
-
+import Image from "next/image";
 
 const CheckOut = () => {
 
@@ -34,9 +34,9 @@ const CheckOut = () => {
 
     useEffect(() => {
         setCartItems(getCartItems());
-        const appliedDiscount = localStorage.getItem("appliedDiscount");
-        if (appliedDiscount) {
-            setDiscount(Number(appliedDiscount))
+        const applliedDiscount = localStorage.getItem("appliedDiscount");
+        if (applliedDiscount) {
+            setDiscount(Number(applliedDiscount))
         }
     }, []);
 
@@ -69,7 +69,7 @@ const CheckOut = () => {
 
     const handlePlaceOrder = async () => {
         if (validateForm()) {
-            localStorage.removeItem("appliedDiscount");
+            localStorage.removeItem("applliedDiscount");
         }
     
         const orderData = {
@@ -100,8 +100,6 @@ const CheckOut = () => {
         }
     };
     
-    
-
     return (
         <div className="min-h-screen bg-gray-100">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -118,17 +116,17 @@ const CheckOut = () => {
                     {/* Order Summary */}
                     <div className="bg-white p-6 rounded-lg shadow-md">
                         <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
-                        {cartItems.length > 0 ? (
+                        {cartItems.length > 1 ? (
                             cartItems.map((item) => (
                                 <div key={item._id} className="flex items-center border-b pb-4 mb-4">
                                     <div className="flex-shrink-0 w-24 h-24 mr-4">
-                                        {item.image && (
-                                            <img
-                                                src={urlFor(item.image).url()}
-                                                alt={item.product}
-                                                className="object-cover"
-                                            />
-                                        )}
+                                    <Image
+                                    src={urlFor(item.image).url()}
+                                    alt={`Image of ${item.name} - ${item.product}`} // Update alt text to be more descriptive
+                                   width={200}
+                                       height={200}
+                                    className="object-cover"
+                                     />
                                     </div>
                                     <div className="flex-grow">
                                         <h3 className="text-lg font-semibold">{item.name}</h3>
@@ -151,121 +149,103 @@ const CheckOut = () => {
                           </p>
                         </div>
                     </div>
-
                     {/* Shipping Form */}
                     <div className="bg-white p-6 rounded-lg shadow-md">
-                        <h2 className="text-xl font-semibold mb-4">Shipping Information</h2>
-                        <form>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-                                <input
-                                    type="text"
-                                    id="firstName"
-                                    value={formValues.firstName}
-                                    onChange={handleInputChange}
-                                    placeholder="Enter Your First Name"
-                                    className="border p-3 rounded-md w-full"
-                                />
-                                {formErrors.firstName && (
-                                    <p>
-                                    First Name is Required
-                                    </p>
-                                )}
-                                <input
-                                    type="text"
-                                    id="lastName"
-                                    value={formValues.lastName}
-                                    onChange={handleInputChange}
-                                    placeholder="Enter Your Last Name"
-                                    className="border p-3 rounded-md w-full"
-                                />
+    <h2 className="text-xl font-semibold mb-4">Shipping Information</h2>
+    <form>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+            <input
+                type="text"
+                id="firstName"
+                value={formValues.firstName}
+                onChange={handleInputChange}
+                placeholder="Enter Your First Name"
+                className="border p-3 rounded-md w-full"
+            />
+            {formErrors.firstName && (
+                <p className="text-red-500">First Name is Required</p>
+            )}
+            <input
+                type="text"
+                id="lastName"
+                value={formValues.lastName}
+                onChange={handleInputChange}
+                placeholder="Enter Your Last Name"
+                className="border p-3 rounded-md w-full"
+            />
+            {formErrors.lastName && (
+                <p className="text-red-500">Last Name is Required</p>
+            )}
+        </div>
+        <input
+            type="text"
+            id="address"
+            value={formValues.address}
+            onChange={handleInputChange}
+            placeholder="Enter Your Address"
+            className="border p-3 rounded-md w-full mb-4"
+        />
+        {formErrors.address && (
+            <p className="text-red-500">Address is Required</p>
+        )}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+            <input
+                type="text"
+                id="city"
+                value={formValues.city}
+                onChange={handleInputChange}
+                placeholder="Enter Your City"
+                className="border p-3 rounded-md w-full"
+            />
+            {formErrors.city && (
+                <p className="text-red-500">City is Required</p>
+            )}
+            <input
+                type="text"
+                id="zipCode"
+                value={formValues.zipCode}
+                onChange={handleInputChange}
+                placeholder="Enter Your Zip Code"
+                className="border p-3 rounded-md w-full"
+            />
+            {formErrors.zipCode && (
+                <p className="text-red-500">Zip Code is Required</p>
+            )}
+        </div>
+        <input
+    type="tel"
+    id="phone"
+    value={formValues.phone}
+    onChange={handleInputChange}
+    placeholder="Enter Your Phone"
+    inputMode="numeric"
+    pattern="[0-9]*"  // Ensures only digits are accepted
+    className="border p-3 rounded-md w-full"
+/>
+{formErrors.phone && (
+    <p className="text-red-500">Phone is Required</p>
+)}
+        <input
+            type="email"
+            id="email"
+            value={formValues.email}
+            onChange={handleInputChange}
+            placeholder="Enter Your Email"
+            className="border p-3 rounded-md w-full mb-6"
+        />
+        {formErrors.email && (
+            <p className="text-red-500">Email is Required</p>
+        )}
+        <button
+            type="submit"
+    className='bg-gradient-to-r from-black to-red-500 text-white font-semibold py-2 px-4 rounded-lg shadow-md 
+            hover:scale-110 transition-transform duration-200 ease-in-out '
+        >
+            Place Order
+        </button>
+    </form>
+</div>
 
-{formErrors.firstName && (
-                                    <p>
-                                    First Name is Required
-                                    </p>
-                                )}
-                            </div>
-
-                            <input
-                                type="text"
-                                id="address"
-                                value={formValues.address}
-                                onChange={handleInputChange}
-                                placeholder="Address"
-                                className="border p-3 rounded-md w-full mb-4"
-                            />
-
-{formErrors.firstName && (
-                                    <p>
-                                    Address is Required
-                                    </p>
-                                )}
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-                                <input
-                                    type="text"
-                                    id="email"
-                                    value={formValues.email}
-                                    onChange={handleInputChange}
-                                    placeholder="Email"
-                                    className="border p-3 rounded-md w-full"
-                                />
-
-{formErrors.firstName && (
-                                    <p>
-                                    Email is Required
-                                    </p>
-                                )}
-                                <input
-                                    type="text"
-                                    id="phone"
-                                    value={formValues.phone}
-                                    onChange={handleInputChange}
-                                    placeholder="phone"
-                                    className="border p-3 rounded-md w-full"
-                                />
-
-{formErrors.firstName && (
-                                    <p>
-                                    Contact is Required
-                                    </p>
-                                )}
-                            </div>
-
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-                                <input
-                                    type="text"
-                                    id="city"
-                                    value={formValues.city}
-                                    onChange={handleInputChange}
-                                    placeholder="City"
-                                    className="border p-3 rounded-md w-full"
-                                />
-
-{formErrors.firstName && (
-                                    <p>
-                                    City is Required
-                                    </p>
-                                )}
-                                
-                            </div>
-
-                            <input
-                                type="text"
-                                id="zipCode"
-                                value={formValues.zipCode}
-                                onChange={handleInputChange}
-                                placeholder="zipCode"
-                                className="border p-3 rounded-md w-full mb-6"
-                            />
-                            {formErrors.zipCode && <p>contry is required</p>}
-                            <button
-                                type="submit"
-                                className="bg-pink-400 text-white p-3 w-full rounded-md hover:bg-pink-700"
-                            >
-                                Place Order
-                            </button>
-                        </form>
-                    </div>
                 </div>
             </div>
         </div>
